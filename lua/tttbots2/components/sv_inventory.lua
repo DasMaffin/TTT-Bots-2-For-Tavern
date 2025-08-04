@@ -668,3 +668,32 @@ function plyMeta:BotInventory()
     ---@cast self Bot
     return self.components.inventory
 end
+
+local cached_spawnable_weapons = {}
+
+-- Build the list once after all weapons are loaded
+hook.Add("Initialize", "TTTBots_CacheSpawnableWeapons", function()
+    cached_spawnable_weapons = {}
+    for _, swep in ipairs(weapons.GetList()) do
+        if swep.AutoSpawnable and (swep.Kind == WEAPON_HEAVY or swep.Kind == WEAPON_PISTOL) then
+            table.insert(cached_spawnable_weapons, swep.ClassName)
+        end
+    end
+end)
+
+hook.Add("TTTBeginRound", "TTTBots_GiveWeaponsOnRoundStart", function()
+    for _, bot in ipairs(TTTBots.Bots or {}) do
+        if IsValid(bot) and bot:IsBot() and bot:Alive() and #cached_spawnable_weapons > 0 then
+            local wepClass = cached_spawnable_weapons[math.random(#cached_spawnable_weapons)]
+            bot:Give(wepClass)
+            
+            local swepTable = weapons.Get(wepClass)
+            if swepTable and swepTable.Primary and swepTable.Primary.ClipSize and swepTable.Primary.Ammo then
+                local clipSize = swepTable.Primary.ClipSize
+                local ammoType = swepTable.Primary.Ammo
+                local totalAmmo = clipSize * 3
+                bot:SetAmmo(totalAmmo, ammoType)
+            end
+        end
+    end
+end)
