@@ -85,6 +85,21 @@ Registry.Stungun = {
     PrimaryWeapon = true,
 }
 
+---@type Buyable
+Registry.RandomTester = {
+    Name = "Random Tester",
+    Class = "weapon_ttt_randomtest",
+    Price = 1,
+    Priority = 1,
+    RandomChance = 1,
+    ShouldAnnounce = false,
+    AnnounceTeam = false,
+    CanBuy = function(ply)
+        return true
+    end,
+    Roles = { "detective" },
+}
+
 for key, data in pairs(Registry) do
     TTTBots.Buyables.RegisterBuyable(data)
 end

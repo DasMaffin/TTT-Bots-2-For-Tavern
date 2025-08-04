@@ -74,6 +74,7 @@ TTTBots.Behaviors.DefaultTrees = {
     detective = {
         _prior.FightBack,
         _bh.Defib,
+        _bh.RandomTester,
         _bh.Defuse,
         _prior.Restore,
         _bh.Interact,
